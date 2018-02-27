@@ -1,15 +1,14 @@
 #!/bin/bash
-custom_echo () {
-    echo "--------------------------------- $@"
-}
-install () {
-    custom_echo "INSTALLING $@"
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq --fix-missing --allow-unauthenticated $@
-}
 
 PG_IP=${1:-0.0.0.0}  
 PG_PORT=${2:-5050}
 VENV_LOCATION=${3:-"$HOME/.pgadmin4"}
+PG_VERSION=${4:-2.1}
+
+install () {
+    echo "Installing $@"
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq --fix-missing --allow-unauthenticated $@ > /dev/null 2>&1
+}
 
 #python
 install libpq-dev
@@ -19,26 +18,27 @@ install python3-venv
 install python3-pip
 
 #pgadmin
-custom_echo "CREATING VENV FOR PGADMIN"
+custom_echo "Creating virtual env"
 python3 -m venv $VENV_LOCATION
 . pgadmin4/bin/activate
-pip install --upgrade pip
-pip install wheel
-pip install setuptools --upgrade
-echo "Downloading PgAdmin..."
-wget -q https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v2.1/pip/pgadmin4-2.1-py2.py3-none-any.whl
-pip install pgadmin4-2.1-py2.py3-none-any.whl
-sudo rm pgadmin4-2.1-py2.py3-none-any.whl
+pip install --upgrade pip > /dev/null 2>&1
+pip install wheel > /dev/null 2>&1
+pip install setuptools --upgrade > /dev/null 2>&1
+echo "Downloading PgAdmin 4-$PG_VERSION..."
+wget -q https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v$PG_VERSION/pip/pgadmin4-$PG_VERSION-py2.py3-none-any.whl
+echo "Installing PgAdmin 4-$PG_VERSION..."
+pip install pgadmin4-$PG_VERSION-py2.py3-none-any.whl > /dev/null 2>&1
+sudo rm pgadmin4-$PG_VERSION-py2.py3-none-any.whl
 deactivate
 
-custom_echo "CONFIGURING PGADMIN"
+custom_echo "Configuring..."
 sudo echo "SERVER_MODE = False" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo echo "DEFAULT_SERVER = '$PG_IP'" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo echo "DEFAULT_SERVER_PORT = $PG_PORT" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo sed -i -e '1i#!/usr/bin/env python\' $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/pgAdmin4.py
 sudo chmod +x  $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/pgAdmin4.py
 
-custom_echo "CREATING THE SERVICE"
+custom_echo "Creating the service..."
 
 sudo echo '
 [Unit]
