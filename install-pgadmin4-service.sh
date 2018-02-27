@@ -3,7 +3,7 @@ custom_echo () {
     echo "--------------------------------- $@"
 }
 install () {
-    custom_echo echo "INSTALLING $@"
+    custom_echo "INSTALLING $@"
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq --fix-missing --allow-unauthenticated $@
 }
 
