@@ -7,9 +7,9 @@ install () {
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq --fix-missing --allow-unauthenticated $@
 }
 
-VENV_LOCATION = "$HOME/.pgadmin4"
-PG_IP = ${1:-0.0.0.0}  
-PG_PORT = ${2:-5050}
+PG_IP=${1:-0.0.0.0}  
+PG_PORT=${2:-5050}
+VENV_LOCATION=${3:-"$HOME/.pgadmin4"}
 
 #python
 install libpq-dev
