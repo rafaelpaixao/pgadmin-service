@@ -18,7 +18,7 @@ install python3-venv
 install python3-pip
 
 #pgadmin
-custom_echo "Creating virtual env"
+echo "Creating the virtual env..."
 python3 -m venv $VENV_LOCATION
 . pgadmin4/bin/activate
 pip install --upgrade pip > /dev/null 2>&1
@@ -26,19 +26,19 @@ pip install wheel > /dev/null 2>&1
 pip install setuptools --upgrade > /dev/null 2>&1
 echo "Downloading PgAdmin 4-$PG_VERSION..."
 wget -q https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v$PG_VERSION/pip/pgadmin4-$PG_VERSION-py2.py3-none-any.whl
-echo "Installing PgAdmin 4-$PG_VERSION..."
+echo "Installing..."
 pip install pgadmin4-$PG_VERSION-py2.py3-none-any.whl > /dev/null 2>&1
 sudo rm pgadmin4-$PG_VERSION-py2.py3-none-any.whl
 deactivate
 
-custom_echo "Configuring..."
+echo "Configuring..."
 sudo echo "SERVER_MODE = False" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo echo "DEFAULT_SERVER = '$PG_IP'" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo echo "DEFAULT_SERVER_PORT = $PG_PORT" >> $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/config_local.py
 sudo sed -i -e '1i#!/usr/bin/env python\' $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/pgAdmin4.py
 sudo chmod +x  $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/pgAdmin4.py
 
-custom_echo "Creating the service..."
+echo "Creating the service..."
 
 sudo echo '
 [Unit]
