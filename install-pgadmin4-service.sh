@@ -10,17 +10,15 @@ install () {
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq --fix-missing --allow-unauthenticated $@ > /dev/null 2>&1
 }
 
-#python
 install libpq-dev
 install python3
 install python3-dev
 install python3-venv
 install python3-pip
 
-#pgadmin
 echo "Creating the virtual env..."
 python3 -m venv $VENV_LOCATION
-. pgadmin4/bin/activate
+. $VENV_LOCATION/bin/activate
 pip install --upgrade pip > /dev/null 2>&1
 pip install wheel > /dev/null 2>&1
 pip install setuptools --upgrade > /dev/null 2>&1
@@ -40,7 +38,7 @@ sudo chmod +x  $VENV_LOCATION/lib/python3.5/site-packages/pgadmin4/pgAdmin4.py
 
 echo "Creating the service..."
 
-sudo echo '
+sudo -u root echo '
 [Unit]
 Description=Pgadmin4 Service
 After=network.target
@@ -61,4 +59,4 @@ sudo -u root systemctl daemon-reload
 sudo -u root systemctl enable pgadmin4
 sudo -u root systemctl start pgadmin4
 
-echo -e "All done! Go to:\n\thttp://$PG_IP:$PG_PORT"
+echo -e "\nAll done! Go to:\n\thttp://$PG_IP:$PG_PORT"
